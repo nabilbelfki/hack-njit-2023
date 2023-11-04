@@ -11,6 +11,6 @@
         <div id="scoreboard">0</div>
         <img id="ship" src="Ship.png" alt="ship with containers">
         <img id="coin" src="Coin.png" alt="coin with dollar sign">
-        <img id="coin" src="Spinner.png" alt="spinner with spikes, be careful this could destroy your ship">
+        <img id="spinner" src="Spinner.png" alt="spinner with spikes, be careful this could destroy your ship">
     </body>
 </html>

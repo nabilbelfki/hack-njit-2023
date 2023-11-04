@@ -22,6 +22,12 @@ $(document).ready(function() {
         element: $('#coin')
       };
 
+    var gear = {
+      x: 0,
+      y: 0,
+      element: $('#spinner')
+    }
+
     $(document).keydown(function(e) {
       keys[e.which] = true;
     });
@@ -97,6 +103,10 @@ $(document).ready(function() {
         });
         coin.element.show();
       }
+
+      if (checkCollision(ship,gear)) {
+        
+      }
     }
 
     setInterval(moveShip, 1000 / 60);
@@ -123,4 +133,11 @@ $(document).ready(function() {
   function collect(points) {
     score += points;
     $('#scoreboard').html(score);
+  }
+
+  function gearCollide(checkCollision()){
+
+  }
+  function spinRandom(position) {
+    
   }
