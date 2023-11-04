@@ -1,4 +1,5 @@
 let score = 0;
+let health = 3;
 $(document).ready(function() {
     var keys = {};
     keys.LEFT = 37;
@@ -105,7 +106,8 @@ $(document).ready(function() {
       }
 
       if (checkCollision(ship,gear)) {
-        
+        health--;
+        gear.element.hide()
       }
     }
 
