@@ -137,9 +137,10 @@ $(document).ready(function() {
     $('#scoreboard').html(score);
   }
 
-  function gearCollide(checkCollision()){
+//   function gearCollide(checkCollision()){
 
-  }
+//   }
+
   function spinRandom(position) {
     
   }

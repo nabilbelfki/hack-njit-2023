@@ -36,6 +36,18 @@ body {
     width: 300px;
     height: 300px;
 }
+
+#heart {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background-color: white;
+    padding: 10px;
+    width: 50px;
+    height: 30px;
+    text-align: center;
+    border: 1px solid black;
+}
 @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
 @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
 @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
