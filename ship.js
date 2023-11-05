@@ -19,6 +19,8 @@ $(document).ready(function () {
   keys.BOTTOM_RIGHT = 34;
 
   spawnRocks();
+  clouds();
+  moveSpinner();
 
   ship = {
     x: window.innerWidth / 2,
@@ -48,7 +50,16 @@ $(document).ready(function () {
     top: gear.y + "px",
   });
 
-  setHealthBarPosition();
+  setInterval(function () {
+    gear.x = gear.element[0].offsetLeft;
+    gear.y = gear.element[0].offsetTop;
+  }, 1);
+
+  // setHealthBarPosition();
+
+  setInterval(function () {
+    setHealthBarPosition();
+  }, 1);
 
   orb = {
     x: Math.floor(Math.random() * (window.innerWidth - $("#orb").width())),
@@ -60,6 +71,10 @@ $(document).ready(function () {
     left: orb.x + "px",
     top: orb.y + "px",
   });
+
+  setTimeout(function () {
+    $("#orb").show();
+  }, 7000);
 
   $(document).keydown(function (e) {
     keys[e.which] = true;
@@ -152,7 +167,7 @@ $(document).ready(function () {
         }
       });
 
-      if (checkCollision(ship, coin)) {
+      if (checkCollision(ship, coin) && coin.element.is(":visible")) {
         collect(1);
         coin.element.hide();
         coin.x = Math.floor(
@@ -168,7 +183,7 @@ $(document).ready(function () {
         coin.element.show();
       }
 
-      if (checkCollision(ship, gear)) {
+      if (checkCollision(ship, gear) && gear.element.is(":visible")) {
         loseLife();
         gear.element.hide();
         gear.x = Math.floor(
@@ -185,22 +200,24 @@ $(document).ready(function () {
         gear.element.show();
       }
 
-      if (checkCollision(ship, orb)) {
+      if (checkCollision(ship, orb) && orb.element.is(":visible")) {
         orb.element.hide();
-        orb.x = Math.floor(
-          Math.random() * (window.innerWidth - orb.element.width())
-        );
-        orb.y = Math.floor(
-          Math.random() * (window.innerHeight - orb.element.height())
-        );
-        orb.element.css({
-          left: orb.x + "px",
-          top: orb.y + "px",
-        });
-        orb.element.show();
         $("#force-field").show();
         forceField = true;
         setTimeout(forceFieldDisappears, 10000);
+        setTimeout(function () {
+          orb.x = Math.floor(
+            Math.random() * (window.innerWidth - orb.element.width())
+          );
+          orb.y = Math.floor(
+            Math.random() * (window.innerHeight - orb.element.height())
+          );
+          orb.element.css({
+            left: orb.x + "px",
+            top: orb.y + "px",
+          });
+          orb.element.show();
+        }, 20000);
       }
     }
   }
@@ -347,12 +364,43 @@ function shoot(x, y, direction) {
       bulletRect.top < gearRect.bottom &&
       bulletRect.bottom > gearRect.top
     ) {
+      let x = gear.x;
+      let y = gear.y;
       console.log("Hit!");
       bullet.remove();
       enemy -= 20;
       handleHealthBar();
       if (enemy == 0) {
         $("#gear").hide();
+        explosion = {
+          x: x,
+          y: y,
+          element: $("#explosion"),
+        };
+        console.log("gets here");
+        console.log(x);
+        console.log(y);
+        explosion.element.css({
+          left: x + 25 + "px",
+          top: y + 20 + "px",
+        });
+        $("#explosion").show();
+
+        setTimeout(function () {
+          $("#explosion").hide();
+        }, 1000);
+
+        setTimeout(function () {
+          gear.x = Math.floor(
+            Math.random() * (window.innerWidth - $("#gear").width())
+          );
+          gear.y = Math.floor(
+            Math.random() * (window.innerHeight - $("#gear").height())
+          );
+          enemy = 100;
+          $("#health-5").show();
+          $("#gear").show();
+        }, 5000);
       }
     }
     if (!document.body.contains(bullet)) {
@@ -420,17 +468,6 @@ function setHealthBarPosition() {
     left: gear.x + 40 + "px",
     top: gear.y + 80 + "px",
   });
-
-  explosion = {
-    x: gear.x,
-    y: gear.y,
-    element: $("#explosion"),
-  };
-
-  explosion.element.css({
-    left: gear.x + 25 + "px",
-    top: gear.y + 20 + "px",
-  });
 }
 
 function handleHealthBar() {
@@ -470,10 +507,6 @@ function handleHealthBar() {
     $("#health-3").hide();
     $("#health-2").hide();
     $("#health-1").hide();
-    $("#explosion").show();
-    setTimeout(function () {
-      $("#explosion").hide();
-    }, 1000);
   }
 }
 
@@ -498,17 +531,6 @@ function spawnRocks() {
   rock2.element.css({
     left: rock2.x + "px",
     top: rock2.y + "px",
-  });
-
-  rock3 = {
-    x: Math.floor(Math.random() * (window.innerWidth - $("#rock-3").width())),
-    y: Math.floor(Math.random() * (window.innerHeight - $("#rock-3").height())),
-    element: $("#rock-3"),
-  };
-
-  rock3.element.css({
-    left: rock3.x + "px",
-    top: rock3.y + "px",
   });
 }
 
@@ -551,4 +573,30 @@ function clouds() {
     left: cloud3.x + "px",
     top: cloud3.y + "px",
   });
+}
+
+function moveSpinner() {
+  var spinner = $("#gear");
+  var ship = $("#ship");
+
+  // Calculate the distance between the spinner and the ship
+  var dx = ship.offset().left - spinner.offset().left;
+  var dy = ship.offset().top - spinner.offset().top;
+  var distance = Math.sqrt(dx * dx + dy * dy);
+
+  // Calculate the duration of the animation based on the distance
+  var duration = distance / 100;
+
+  // Update the animation duration
+  spinner.animate(
+    {
+      left: ship.offset().left,
+      top: ship.offset().top,
+    },
+    duration * 1000,
+    function () {
+      // Readjust the position of the spinner
+      moveSpinner();
+    }
+  );
 }

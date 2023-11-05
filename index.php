@@ -14,7 +14,6 @@
         <!-- Rocks -->
         <img class="rocks" id="rock-1" src="Images/Rock One.png" alt="Three circular rocks">
         <img class="rocks" id="rock-2" src="Images/Rock Two.png" alt="An elongated rock">
-        <img class="rocks" id="rock-3" src="Images/Rock Three.png" alt="Little white rock">
         
         <!-- Clouds -->
         <img class="clouds" id="cloud-1" src="Images/Cloud One.png" alt="A thick cloud">
