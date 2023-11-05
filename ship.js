@@ -1,6 +1,10 @@
 let score = 0;
 let health = 3;
+let health5, health4, health3, health2, health1;
+let forceField = false;
 var gear, coin, ship, orb;
+var canShoot = true;
+var direction = "up";
 $(document).ready(function () {
   var keys = {};
   keys.LEFT = 37;
@@ -40,6 +44,8 @@ $(document).ready(function () {
     top: gear.y + "px",
   });
 
+  setHealthBarPosition();
+
   orb = {
     x: Math.floor(Math.random() * (window.innerWidth - $("#orb").width())),
     y: Math.floor(Math.random() * (window.innerHeight - $("#orb").height())),
@@ -65,21 +71,25 @@ $(document).ready(function () {
       var dy = 0;
 
       if (keys[keys.LEFT]) {
+        direction = "left";
         $("#ship").css("transform", "rotate(-90deg)");
         dx -= 10;
       }
 
       if (keys[keys.UP]) {
+        direction = "up";
         $("#ship").css("transform", "rotate(0deg)");
         dy -= 10;
       }
 
       if (keys[keys.RIGHT]) {
+        direction = "right";
         $("#ship").css("transform", "rotate(90deg)");
         dx += 10;
       }
 
       if (keys[keys.DOWN]) {
+        direction = "down";
         $("#ship").css("transform", "rotate(180deg)");
         dy += 10;
       }
@@ -116,6 +126,23 @@ $(document).ready(function () {
         top: ship.y + "px",
       });
 
+      $("#force-field").css({
+        left: ship.x + "px",
+        top: ship.y + "px",
+      });
+
+      $(document).on("keyup", function (e) {
+        if (e.key == " " || e.code == "Space" || e.keyCode == 32) {
+          if (canShoot) {
+            shoot(ship.x, ship.y, direction);
+            canShoot = false;
+            setTimeout(function () {
+              canShoot = true;
+            }, 1000);
+          }
+        }
+      });
+
       if (checkCollision(ship, coin)) {
         collect(1);
         coin.element.hide();
@@ -145,6 +172,7 @@ $(document).ready(function () {
           left: gear.x + "px",
           top: gear.y + "px",
         });
+        setHealthBarPosition();
         gear.element.show();
       }
 
@@ -161,6 +189,9 @@ $(document).ready(function () {
           top: orb.y + "px",
         });
         orb.element.show();
+        $("#force-field").show();
+        forceField = true;
+        setTimeout(forceFieldDisappears, 10000);
       }
     }
   }
@@ -213,11 +244,140 @@ function collect(points) {
 function spinRandom(position) {}
 
 function loseLife() {
-  if (health == 3) $("#heart-3").hide();
-  if (health == 2) $("#heart-2").hide();
-  if (health == 1) {
-    $("#gameover").show();
-    $("#heart-1").hide();
+  if (!forceField) {
+    if (health == 3) $("#heart-3").hide();
+    if (health == 2) $("#heart-2").hide();
+    if (health == 1) {
+      $("#gameover").show();
+      $("#heart-1").hide();
+    }
+    health--;
   }
-  health--;
+}
+
+function forceFieldDisappears() {
+  forceField = false;
+  $("#force-field").hide();
+}
+
+function shoot(x, y, direction) {
+  // Create a new bullet element
+  var bullet = document.createElement("img");
+  bullet.src = "Images/Bullet.png";
+  bullet.alt = "force field";
+  bullet.style.position = "absolute";
+  bullet.style.left = x + "px";
+  bullet.style.top = y + "px";
+  bullet.style.width = "32px";
+  bullet.style.height = "32px";
+  document.body.appendChild(bullet);
+
+  // Set the end position of the bullet based on the direction
+  var x2, y2;
+  switch (direction) {
+    case "up":
+      x2 = x;
+      y2 = -bullet.height;
+      break;
+    case "down":
+      x2 = x;
+      y2 = window.innerHeight;
+      break;
+    case "left":
+      bullet.style.transform = "rotate(-90deg)";
+      x2 = -bullet.width;
+      y2 = y;
+      break;
+    case "right":
+      bullet.style.transform = "rotate(90deg)";
+      x2 = window.innerWidth;
+      y2 = y;
+      break;
+    default:
+      console.log("Invalid direction");
+      return;
+  }
+  console.log(direction);
+  // Add the CSS animation to the bullet
+  bullet.style.animationName = "glide-" + direction;
+  bullet.style.animationDuration = "1s";
+  bullet.style.animationTimingFunction = "linear";
+  bullet.style.animationFillMode = "forwards";
+
+  // Add the keyframes for the CSS animation
+  var style = document.createElement("style");
+  style.innerHTML =
+    "@keyframes glide-" +
+    direction +
+    " { from { left: " +
+    x +
+    "px; top: " +
+    y +
+    "px; } to { left: " +
+    x2 +
+    "px; top: " +
+    y2 +
+    "px; } }";
+  document.head.appendChild(style);
+
+  setTimeout(function () {
+    bullet.remove();
+  }, 2000);
+}
+
+function setHealthBarPosition() {
+  health5 = {
+    x: gear.x,
+    y: gear.y,
+    element: $("#health-5"),
+  };
+
+  health5.element.css({
+    left: gear.x + 40 + "px",
+    top: gear.y + 80 + "px",
+  });
+
+  health4 = {
+    x: gear.x,
+    y: gear.y,
+    element: $("#health-4"),
+  };
+
+  health4.element.css({
+    left: gear.x + 40 + "px",
+    top: gear.y + 80 + "px",
+  });
+
+  health3 = {
+    x: gear.x,
+    y: gear.y,
+    element: $("#health-3"),
+  };
+
+  health3.element.css({
+    left: gear.x + 40 + "px",
+    top: gear.y + 80 + "px",
+  });
+
+  health2 = {
+    x: gear.x,
+    y: gear.y,
+    element: $("#health-2"),
+  };
+
+  health2.element.css({
+    left: gear.x + 40 + "px",
+    top: gear.y + 80 + "px",
+  });
+
+  health1 = {
+    x: gear.x,
+    y: gear.y,
+    element: $("#health-1"),
+  };
+
+  health1.element.css({
+    left: gear.x + 40 + "px",
+    top: gear.y + 80 + "px",
+  });
 }

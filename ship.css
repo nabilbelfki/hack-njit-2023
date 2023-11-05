@@ -25,6 +25,19 @@ body {
     position: absolute;
 }
 
+.health {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+}
+
+#health-4,
+#health-3,
+#health-2,
+#health-1 {
+    display: none;
+}
+
 #scoreboard {
     position: fixed;
     top: 10px;
@@ -40,6 +53,13 @@ body {
 #orb {
     width: 30px;
     height: 30px;
+    position: absolute;
+}
+
+#force-field {
+    display: none;
+    width: 150px;
+    height: 150px;
     position: absolute;
 }
 
@@ -75,6 +95,11 @@ body {
     top: 10px;
     left: 110px;
     padding: 10px;
+    width: 30px;
+    height: 30px;
+}
+
+#bullet {
     width: 30px;
     height: 30px;
 }

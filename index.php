@@ -16,7 +16,12 @@
         <img id="heart-2" src="Images/Heart.png" alt="heart for lives">
         <img id="heart-3" src="Images/Heart.png" alt="heart for lives">
         <img id="orb" src="Images/Orb.png" alt="orb for force field">
-        <img id="force-field" src="Images/ForceField.png" alt="force field">
+        <img id="force-field" src="Images/Force Field 2.png" alt="force field">
+        <img class="health" id="health-5" src="Images/HealthFive.png" alt="100% health">
+        <img class="health" id="health-4" src="Images/HealthFour.png" alt="80% health">
+        <img class="health" id="health-3" src="Images/HealthThree.png" alt="60% health">
+        <img class="health" id="health-2" src="Images/HealthTwo.png" alt="40% health">
+        <img class="health" id="health-1" src="Images/HealthOne.png" alt="20% health">
         <img id="gear" src="Images/Spinner.png" alt="spinner with spikes, be careful this could destroy your ship">
     </body>
 </html>
