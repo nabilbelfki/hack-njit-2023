@@ -8,7 +8,7 @@
 }
 
 body {
-    background-image : url('Background.jpg')
+    background-image : url('Images/Background.jpg')
 }
 
 #gameover {
@@ -35,6 +35,12 @@ body {
     height: 30px;
     text-align: center;
     border: 1px solid black;
+}
+
+#orb {
+    width: 30px;
+    height: 30px;
+    position: absolute;
 }
 
 #gear {

@@ -10,11 +10,13 @@
     <body>
         <div id="scoreboard">0</div>
         <div id="gameover" style="display:none"><h1>GAME OVER</h1></div>
-        <img id="ship" src="Ship.png" alt="ship with containers">
-        <img id="coin" src="Coin.png" alt="coin with dollar sign">
-        <img id="heart-1" src="Heart.png" alt="heart for lives">
-        <img id="heart-2" src="Heart.png" alt="heart for lives">
-        <img id="heart-3" src="Heart.png" alt="heart for lives">
-        <img id="gear" src="Spinner.png" alt="spinner with spikes, be careful this could destroy your ship">
+        <img id="ship" src="Images/Ship.png" alt="ship with containers">
+        <img id="coin" src="Images/Coin.png" alt="coin with dollar sign">
+        <img id="heart-1" src="Images/Heart.png" alt="heart for lives">
+        <img id="heart-2" src="Images/Heart.png" alt="heart for lives">
+        <img id="heart-3" src="Images/Heart.png" alt="heart for lives">
+        <img id="orb" src="Images/Orb.png" alt="orb for force field">
+        <img id="force-field" src="Images/ForceField.png" alt="force field">
+        <img id="gear" src="Images/Spinner.png" alt="spinner with spikes, be careful this could destroy your ship">
     </body>
 </html>
