@@ -185,25 +185,10 @@ $(document).ready(function () {
 
       if (checkCollision(ship, gear)) {
         gear.element.hide();
-        console.log(forceField);
         if (!forceField) {
-          gear.x = Math.floor(
-            Math.random() * (window.innerWidth - gear.element.width())
-          );
-          gear.y = Math.floor(
-            Math.random() * (window.innerHeight - gear.element.height())
-          );
-          gear.element.css({
-            left: gear.x + "px",
-            top: gear.y + "px",
-          });
           loseLife();
-          setHealthBarPosition();
-          gear.element.show();
-        } else {
-          console.log("GOT INTO ELSE");
-          kill();
         }
+        kill();
       }
 
       if (checkCollision(ship, orb) && orb.element.is(":visible")) {
