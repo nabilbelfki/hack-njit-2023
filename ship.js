@@ -184,20 +184,26 @@ $(document).ready(function () {
       }
 
       if (checkCollision(ship, gear) && gear.element.is(":visible")) {
-        loseLife();
         gear.element.hide();
-        gear.x = Math.floor(
-          Math.random() * (window.innerWidth - gear.element.width())
-        );
-        gear.y = Math.floor(
-          Math.random() * (window.innerHeight - gear.element.height())
-        );
-        gear.element.css({
-          left: gear.x + "px",
-          top: gear.y + "px",
-        });
-        setHealthBarPosition();
-        gear.element.show();
+        console.log(forceField);
+        if (!forceField) {
+          loseLife();
+          gear.x = Math.floor(
+            Math.random() * (window.innerWidth - gear.element.width())
+          );
+          gear.y = Math.floor(
+            Math.random() * (window.innerHeight - gear.element.height())
+          );
+          gear.element.css({
+            left: gear.x + "px",
+            top: gear.y + "px",
+          });
+          setHealthBarPosition();
+          gear.element.show();
+        } else {
+          console.log("GOT INTO ELSE");
+          kill();
+        }
       }
 
       if (checkCollision(ship, orb) && orb.element.is(":visible")) {
@@ -599,4 +605,49 @@ function moveSpinner() {
       moveSpinner();
     }
   );
+}
+
+function kill() {
+  console.log("got here");
+  let x = gear.x;
+  let y = gear.y;
+  // $("#gear").hide();
+  $("#health-5").hide();
+  $("#health-4").hide();
+  $("#health-3").hide();
+  $("#health-2").hide();
+  $("#health-1").hide();
+
+  explosion = {
+    x: x,
+    y: y,
+    element: $("#explosion"),
+  };
+
+  explosion.element.css({
+    left: x + 25 + "px",
+    top: y + 20 + "px",
+  });
+
+  $("#explosion").show();
+
+  console.log("explosion");
+
+  setTimeout(function () {
+    $("#explosion").hide();
+  }, 1000);
+
+  setTimeout(function () {
+    gear.x = Math.floor(
+      Math.random() * (window.innerWidth - $("#gear").width())
+    );
+    gear.y = Math.floor(
+      Math.random() * (window.innerHeight - $("#gear").height())
+    );
+    enemy = 100;
+
+    $("#health-5").show();
+
+    $("#gear").show();
+  }, 5000);
 }
