@@ -11,6 +11,14 @@ body {
     background-image : url('Background.jpg')
 }
 
+#gameover {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
 #coin {
     width: 30px;
     height: 30px;
@@ -29,12 +37,13 @@ body {
     border: 1px solid black;
 }
 
-#spinner {
+#gear {
     -webkit-animation:spin 4s linear infinite;
     -moz-animation:spin 4s linear infinite;
     animation:spin 4s linear infinite;
-    width: 300px;
-    height: 300px;
+    width: 100px;
+    height: 100px;
+    position: absolute;
 }
 
 #heart-1 {

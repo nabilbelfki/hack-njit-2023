@@ -1,5 +1,6 @@
 let score = 0;
 let health = 3;
+var gear, coin, ship;
 $(document).ready(function () {
   var keys = {};
   keys.LEFT = 37;
@@ -11,13 +12,13 @@ $(document).ready(function () {
   keys.BOTTOM_LEFT = 35;
   keys.BOTTOM_RIGHT = 34;
 
-  var ship = {
+  ship = {
     x: window.innerWidth / 2,
     y: window.innerHeight / 2,
     element: $("#ship"),
   };
 
-  var coin = {
+  coin = {
     x: Math.floor(Math.random() * (window.innerWidth - $("#coin").width())),
     y: Math.floor(Math.random() * (window.innerHeight - $("#coin").height())),
     element: $("#coin"),
@@ -28,11 +29,16 @@ $(document).ready(function () {
     top: coin.y + "px",
   });
 
-  var gear = {
-    x: 0,
-    y: 0,
-    element: $("#spinner"),
+  gear = {
+    x: Math.floor(Math.random() * (window.innerWidth - $("#gear").width())),
+    y: Math.floor(Math.random() * (window.innerHeight - $("#gear").height())),
+    element: $("#gear"),
   };
+
+  gear.element.css({
+    left: gear.x + "px",
+    top: gear.y + "px",
+  });
 
   $(document).keydown(function (e) {
     keys[e.which] = true;
@@ -115,7 +121,19 @@ $(document).ready(function () {
     }
 
     if (checkCollision(ship, gear)) {
-      health--;
+      loseLife();
+      gear.element.hide();
+      gear.x = Math.floor(
+        Math.random() * (window.innerWidth - gear.element.width())
+      );
+      gear.y = Math.floor(
+        Math.random() * (window.innerHeight - gear.element.height())
+      );
+      gear.element.css({
+        left: gear.x + "px",
+        top: gear.y + "px",
+      });
+      gear.element.show();
     }
   }
 
@@ -123,6 +141,7 @@ $(document).ready(function () {
 });
 
 function checkCollision(obj1, obj2) {
+  // console.log(obj2);
   var obj1Left = obj1.x;
   var obj1Right = obj1.x + obj1.element.width();
   var obj1Top = obj1.y;
@@ -133,12 +152,25 @@ function checkCollision(obj1, obj2) {
   var obj2Top = obj2.y;
   var obj2Bottom = obj2.y + obj2.element.height();
 
-  return !(
+  var isColliding = !(
     obj1Left > obj2Right ||
     obj1Right < obj2Left ||
     obj1Top > obj2Bottom ||
     obj1Bottom < obj2Top
   );
+
+  if (isColliding) {
+    console.log("obj1Left:", obj1Left);
+    console.log("obj1Right:", obj1Right);
+    console.log("obj1Top:", obj1Top);
+    console.log("obj1Bottom:", obj1Bottom);
+    console.log("obj2Left:", obj2Left);
+    console.log("obj2Right:", obj2Right);
+    console.log("obj2Top:", obj2Top);
+    console.log("obj2Bottom:", obj2Bottom);
+  }
+  // console.log("Are the objects colliding?", isColliding);
+  return isColliding;
 }
 
 function collect(points) {
@@ -151,3 +183,13 @@ function collect(points) {
 //   }
 
 function spinRandom(position) {}
+
+function loseLife() {
+  if (health == 3) $("#heart-3").hide();
+  if (health == 2) $("#heart-2").hide();
+  if (health == 1) {
+    $("#gameover").show();
+    $("#heart-1").hide();
+  }
+  health--;
+}
