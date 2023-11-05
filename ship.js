@@ -1,6 +1,6 @@
 let score = 0;
 let health = 3;
-var gear, coin, ship;
+var gear, coin, ship, orb;
 $(document).ready(function () {
   var keys = {};
   keys.LEFT = 37;
@@ -40,6 +40,17 @@ $(document).ready(function () {
     top: gear.y + "px",
   });
 
+  orb = {
+    x: Math.floor(Math.random() * (window.innerWidth - $("#orb").width())),
+    y: Math.floor(Math.random() * (window.innerHeight - $("#orb").height())),
+    element: $("#orb"),
+  };
+
+  orb.element.css({
+    left: orb.x + "px",
+    top: orb.y + "px",
+  });
+
   $(document).keydown(function (e) {
     keys[e.which] = true;
   });
@@ -49,91 +60,108 @@ $(document).ready(function () {
   });
 
   function moveShip() {
-    var dx = 0;
-    var dy = 0;
+    if (health > 0) {
+      var dx = 0;
+      var dy = 0;
 
-    if (keys[keys.LEFT]) {
-      $("#ship").css("transform", "rotate(-90deg)");
-      dx -= 10;
-    }
+      if (keys[keys.LEFT]) {
+        $("#ship").css("transform", "rotate(-90deg)");
+        dx -= 10;
+      }
 
-    if (keys[keys.UP]) {
-      $("#ship").css("transform", "rotate(0deg)");
-      dy -= 10;
-    }
+      if (keys[keys.UP]) {
+        $("#ship").css("transform", "rotate(0deg)");
+        dy -= 10;
+      }
 
-    if (keys[keys.RIGHT]) {
-      $("#ship").css("transform", "rotate(90deg)");
-      dx += 10;
-    }
+      if (keys[keys.RIGHT]) {
+        $("#ship").css("transform", "rotate(90deg)");
+        dx += 10;
+      }
 
-    if (keys[keys.DOWN]) {
-      $("#ship").css("transform", "rotate(180deg)");
-      dy += 10;
-    }
+      if (keys[keys.DOWN]) {
+        $("#ship").css("transform", "rotate(180deg)");
+        dy += 10;
+      }
 
-    if (keys[keys.TOP_LEFT]) {
-      $("#ship").css("transform", "rotate(-45deg)");
-      dx -= 7;
-      dy -= 7;
-    }
+      if (keys[keys.TOP_LEFT]) {
+        $("#ship").css("transform", "rotate(-45deg)");
+        dx -= 7;
+        dy -= 7;
+      }
 
-    if (keys[keys.TOP_RIGHT]) {
-      $("#ship").css("transform", "rotate(45deg)");
-      dx += 7;
-      dy -= 7;
-    }
+      if (keys[keys.TOP_RIGHT]) {
+        $("#ship").css("transform", "rotate(45deg)");
+        dx += 7;
+        dy -= 7;
+      }
 
-    if (keys[keys.BOTTOM_LEFT]) {
-      $("#ship").css("transform", "rotate(-135deg)");
-      dx -= 7;
-      dy += 7;
-    }
+      if (keys[keys.BOTTOM_LEFT]) {
+        $("#ship").css("transform", "rotate(-135deg)");
+        dx -= 7;
+        dy += 7;
+      }
 
-    if (keys[keys.BOTTOM_RIGHT]) {
-      $("#ship").css("transform", "rotate(135deg)");
-      dx += 7;
-      dy += 7;
-    }
+      if (keys[keys.BOTTOM_RIGHT]) {
+        $("#ship").css("transform", "rotate(135deg)");
+        dx += 7;
+        dy += 7;
+      }
 
-    ship.x += dx;
-    ship.y += dy;
+      ship.x += dx;
+      ship.y += dy;
 
-    ship.element.css({
-      left: ship.x + "px",
-      top: ship.y + "px",
-    });
-
-    if (checkCollision(ship, coin)) {
-      collect(1);
-      coin.element.hide();
-      coin.x = Math.floor(
-        Math.random() * (window.innerWidth - coin.element.width())
-      );
-      coin.y = Math.floor(
-        Math.random() * (window.innerHeight - coin.element.height())
-      );
-      coin.element.css({
-        left: coin.x + "px",
-        top: coin.y + "px",
+      ship.element.css({
+        left: ship.x + "px",
+        top: ship.y + "px",
       });
-      coin.element.show();
-    }
 
-    if (checkCollision(ship, gear)) {
-      loseLife();
-      gear.element.hide();
-      gear.x = Math.floor(
-        Math.random() * (window.innerWidth - gear.element.width())
-      );
-      gear.y = Math.floor(
-        Math.random() * (window.innerHeight - gear.element.height())
-      );
-      gear.element.css({
-        left: gear.x + "px",
-        top: gear.y + "px",
-      });
-      gear.element.show();
+      if (checkCollision(ship, coin)) {
+        collect(1);
+        coin.element.hide();
+        coin.x = Math.floor(
+          Math.random() * (window.innerWidth - coin.element.width())
+        );
+        coin.y = Math.floor(
+          Math.random() * (window.innerHeight - coin.element.height())
+        );
+        coin.element.css({
+          left: coin.x + "px",
+          top: coin.y + "px",
+        });
+        coin.element.show();
+      }
+
+      if (checkCollision(ship, gear)) {
+        loseLife();
+        gear.element.hide();
+        gear.x = Math.floor(
+          Math.random() * (window.innerWidth - gear.element.width())
+        );
+        gear.y = Math.floor(
+          Math.random() * (window.innerHeight - gear.element.height())
+        );
+        gear.element.css({
+          left: gear.x + "px",
+          top: gear.y + "px",
+        });
+        gear.element.show();
+      }
+
+      if (checkCollision(ship, orb)) {
+        orb.element.hide();
+        orb.x = Math.floor(
+          Math.random() * (window.innerWidth - orb.element.width())
+        );
+        orb.y = Math.floor(
+          Math.random() * (window.innerHeight - orb.element.height())
+        );
+        orb.element.css({
+          left: orb.x + "px",
+          top: orb.y + "px",
+        });
+        orb.element.show();
+      }
     }
   }
 
