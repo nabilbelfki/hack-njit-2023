@@ -7,6 +7,7 @@ var gear, coin, ship, orb;
 var canShoot = true;
 var direction = "up";
 var enemy = 100;
+var hasGameStarted = false;
 $(document).ready(function () {
   var keys = {};
   keys.LEFT = 37;
@@ -21,6 +22,18 @@ $(document).ready(function () {
   spawnRocks();
   clouds();
   moveSpinner();
+
+  var intervalID = setInterval(function () {
+    var result = moveSpinner();
+    if (result === true) {
+      clearInterval(intervalID);
+    }
+  }, 1);
+
+  $("#start-game").click(function () {
+    $("#container").hide();
+    hasGameStarted = true;
+  });
 
   ship = {
     x: window.innerWidth / 2,
@@ -567,29 +580,32 @@ function clouds() {
 }
 
 function moveSpinner() {
-  var spinner = $("#gear");
-  var ship = $("#ship");
+  if (hasGameStarted) {
+    var spinner = $("#gear");
+    var ship = $("#ship");
 
-  // Calculate the distance between the spinner and the ship
-  var dx = ship.offset().left - spinner.offset().left;
-  var dy = ship.offset().top - spinner.offset().top;
-  var distance = Math.sqrt(dx * dx + dy * dy);
+    // Calculate the distance between the spinner and the ship
+    var dx = ship.offset().left - spinner.offset().left;
+    var dy = ship.offset().top - spinner.offset().top;
+    var distance = Math.sqrt(dx * dx + dy * dy);
 
-  // Calculate the duration of the animation based on the distance
-  var duration = distance / 100;
+    // Calculate the duration of the animation based on the distance
+    var duration = distance / 100;
 
-  // Update the animation duration
-  spinner.animate(
-    {
-      left: ship.offset().left,
-      top: ship.offset().top,
-    },
-    duration * 1000,
-    function () {
-      // Readjust the position of the spinner
-      moveSpinner();
-    }
-  );
+    // Update the animation duration
+    spinner.animate(
+      {
+        left: ship.offset().left,
+        top: ship.offset().top,
+      },
+      duration * 1000,
+      function () {
+        // Readjust the position of the spinner
+        moveSpinner();
+      }
+    );
+    return true;
+  }
 }
 
 function kill() {

@@ -8,6 +8,20 @@
         <link rel="stylesheet" href="ship.css">
     </head>
     <body>
+        <div class="container" id="container">
+            <div class="row">
+                <img id="hack-njit" src="Images/hacknjit2023.png" alt="Hack NJIT 2023">
+            </div>
+            <div class="row">
+                <img id="super-sail" src="Images/Super Sail.png" alt="Super Sail">
+            </div>
+            <div class="row">
+                <button id="start-game">Start Game</button>
+            </div>
+        </div>
+
+
+
         <div id="scoreboard">0</div>
         <div id="gameover" style="display:none"><h1>GAME OVER</h1></div>
 
