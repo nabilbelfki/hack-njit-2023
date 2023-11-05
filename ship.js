@@ -183,11 +183,10 @@ $(document).ready(function () {
         coin.element.show();
       }
 
-      if (checkCollision(ship, gear) && gear.element.is(":visible")) {
+      if (checkCollision(ship, gear)) {
         gear.element.hide();
         console.log(forceField);
         if (!forceField) {
-          loseLife();
           gear.x = Math.floor(
             Math.random() * (window.innerWidth - gear.element.width())
           );
@@ -198,6 +197,7 @@ $(document).ready(function () {
             left: gear.x + "px",
             top: gear.y + "px",
           });
+          loseLife();
           setHealthBarPosition();
           gear.element.show();
         } else {
