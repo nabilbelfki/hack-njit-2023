@@ -8,7 +8,7 @@
 }
 
 body {
-    background-image : url('Images/Background.jpg')
+    background-image : url('Images/Ocean.png')
 }
 
 #gameover {
@@ -20,8 +20,8 @@ body {
 
 
 #coin {
-    width: 30px;
-    height: 30px;
+    width: 60px;
+    height: 60px;
     position: absolute;
 }
 
@@ -51,14 +51,14 @@ body {
 }
 
 #orb {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     position: absolute;
 }
 
 #force-field {
     display: none;
-    width: 150px;
+    width: 230px;
     height: 150px;
     position: absolute;
 }
@@ -104,6 +104,53 @@ body {
     height: 30px;
 }
 
+#explosion {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    display: none;
+}
+
+/* .clouds {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+} */
+
+.rocks {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+}
+
 @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
 @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
 @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+
+.clouds {
+    position: absolute;
+    animation: move-clouds 10s linear infinite;
+    width: 180px;
+    height: 180px;
+}
+
+.cloud-1 {
+    left: 0;
+    top: 50px;
+}
+
+.cloud-2 {
+    left: 200px;
+    top: 100px;
+}
+
+.cloud-3 {
+    left: 400px;
+    top: 150px;
+}
+
+@keyframes move-clouds {
+    from { left: -200px; }
+    to { left: 100%; }
+}

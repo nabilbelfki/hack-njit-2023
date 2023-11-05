@@ -1,10 +1,12 @@
 let score = 0;
 let health = 3;
 let health5, health4, health3, health2, health1;
+let rock1, rock2, rock3;
 let forceField = false;
 var gear, coin, ship, orb;
 var canShoot = true;
 var direction = "up";
+var enemy = 100;
 $(document).ready(function () {
   var keys = {};
   keys.LEFT = 37;
@@ -15,6 +17,8 @@ $(document).ready(function () {
   keys.TOP_RIGHT = 33;
   keys.BOTTOM_LEFT = 35;
   keys.BOTTOM_RIGHT = 34;
+
+  spawnRocks();
 
   ship = {
     x: window.innerWidth / 2,
@@ -73,24 +77,28 @@ $(document).ready(function () {
       if (keys[keys.LEFT]) {
         direction = "left";
         $("#ship").css("transform", "rotate(-90deg)");
+        $("#force-field").css("transform", "rotate(0deg)");
         dx -= 10;
       }
 
       if (keys[keys.UP]) {
         direction = "up";
         $("#ship").css("transform", "rotate(0deg)");
+        $("#force-field").css("transform", "rotate(-90deg)");
         dy -= 10;
       }
 
       if (keys[keys.RIGHT]) {
         direction = "right";
         $("#ship").css("transform", "rotate(90deg)");
+        $("#force-field").css("transform", "rotate(180deg)");
         dx += 10;
       }
 
       if (keys[keys.DOWN]) {
         direction = "down";
         $("#ship").css("transform", "rotate(180deg)");
+        $("#force-field").css("transform", "rotate(90deg)");
         dy += 10;
       }
 
@@ -114,6 +122,7 @@ $(document).ready(function () {
 
       if (keys[keys.BOTTOM_RIGHT]) {
         $("#ship").css("transform", "rotate(135deg)");
+        $("#force-field").css("transform", "rotate(135deg)");
         dx += 7;
         dy += 7;
       }
@@ -127,7 +136,7 @@ $(document).ready(function () {
       });
 
       $("#force-field").css({
-        left: ship.x + "px",
+        left: ship.x - 40 + "px",
         top: ship.y + "px",
       });
 
@@ -276,19 +285,27 @@ function shoot(x, y, direction) {
   var x2, y2;
   switch (direction) {
     case "up":
+      x = x + 50;
+      y = y + 10;
       x2 = x;
       y2 = -bullet.height;
       break;
     case "down":
+      x = x + 65;
+      y = y + 100;
       x2 = x;
       y2 = window.innerHeight;
       break;
     case "left":
+      x = x + 10;
+      y = y + 60;
       bullet.style.transform = "rotate(-90deg)";
       x2 = -bullet.width;
       y2 = y;
       break;
     case "right":
+      x = x + 100;
+      y = y + 60;
       bullet.style.transform = "rotate(90deg)";
       x2 = window.innerWidth;
       y2 = y;
@@ -319,6 +336,29 @@ function shoot(x, y, direction) {
     y2 +
     "px; } }";
   document.head.appendChild(style);
+
+  var checkCollisions = setInterval(function () {
+    var gear = document.getElementById("gear");
+    var bulletRect = bullet.getBoundingClientRect();
+    var gearRect = gear.getBoundingClientRect();
+    if (
+      bulletRect.left < gearRect.right &&
+      bulletRect.right > gearRect.left &&
+      bulletRect.top < gearRect.bottom &&
+      bulletRect.bottom > gearRect.top
+    ) {
+      console.log("Hit!");
+      bullet.remove();
+      enemy -= 20;
+      handleHealthBar();
+      if (enemy == 0) {
+        $("#gear").hide();
+      }
+    }
+    if (!document.body.contains(bullet)) {
+      clearInterval(checkCollisions);
+    }
+  }, 10);
 
   setTimeout(function () {
     bullet.remove();
@@ -379,5 +419,136 @@ function setHealthBarPosition() {
   health1.element.css({
     left: gear.x + 40 + "px",
     top: gear.y + 80 + "px",
+  });
+
+  explosion = {
+    x: gear.x,
+    y: gear.y,
+    element: $("#explosion"),
+  };
+
+  explosion.element.css({
+    left: gear.x + 25 + "px",
+    top: gear.y + 20 + "px",
+  });
+}
+
+function handleHealthBar() {
+  if (enemy == 100) {
+    $("#health-5").show();
+    $("#health-4").hide();
+    $("#health-3").hide();
+    $("#health-2").hide();
+    $("#health-1").hide();
+  } else if (enemy == 80) {
+    $("#health-5").hide();
+    $("#health-4").show();
+    $("#health-3").hide();
+    $("#health-2").hide();
+    $("#health-1").hide();
+  } else if (enemy == 60) {
+    $("#health-5").hide();
+    $("#health-4").hide();
+    $("#health-3").show();
+    $("#health-2").hide();
+    $("#health-1").hide();
+  } else if (enemy == 40) {
+    $("#health-5").hide();
+    $("#health-4").hide();
+    $("#health-3").hide();
+    $("#health-2").show();
+    $("#health-1").hide();
+  } else if (enemy == 20) {
+    $("#health-5").hide();
+    $("#health-4").hide();
+    $("#health-3").hide();
+    $("#health-2").hide();
+    $("#health-1").show();
+  } else {
+    $("#health-5").hide();
+    $("#health-4").hide();
+    $("#health-3").hide();
+    $("#health-2").hide();
+    $("#health-1").hide();
+    $("#explosion").show();
+    setTimeout(function () {
+      $("#explosion").hide();
+    }, 1000);
+  }
+}
+
+function spawnRocks() {
+  rock1 = {
+    x: Math.floor(Math.random() * (window.innerWidth - $("#rock-1").width())),
+    y: Math.floor(Math.random() * (window.innerHeight - $("#rock-1").height())),
+    element: $("#rock-1"),
+  };
+
+  rock1.element.css({
+    left: rock1.x + "px",
+    top: rock1.y + "px",
+  });
+
+  rock2 = {
+    x: Math.floor(Math.random() * (window.innerWidth - $("#rock-2").width())),
+    y: Math.floor(Math.random() * (window.innerHeight - $("#rock-2").height())),
+    element: $("#rock-2"),
+  };
+
+  rock2.element.css({
+    left: rock2.x + "px",
+    top: rock2.y + "px",
+  });
+
+  rock3 = {
+    x: Math.floor(Math.random() * (window.innerWidth - $("#rock-3").width())),
+    y: Math.floor(Math.random() * (window.innerHeight - $("#rock-3").height())),
+    element: $("#rock-3"),
+  };
+
+  rock3.element.css({
+    left: rock3.x + "px",
+    top: rock3.y + "px",
+  });
+}
+
+function clouds() {
+  cloud1 = {
+    x: Math.floor(Math.random() * (window.innerWidth - $("#cloud-1").width())),
+    y: Math.floor(
+      Math.random() * (window.innerHeight - $("#cloud-1").height())
+    ),
+    element: $("#cloud-1"),
+  };
+
+  cloud1.element.css({
+    left: cloud1.x + "px",
+    top: cloud1.y + "px",
+  });
+
+  cloud2 = {
+    x: Math.floor(Math.random() * (window.innerWidth - $("#cloud-2").width())),
+    y: Math.floor(
+      Math.random() * (window.innerHeight - $("#cloud-2").height())
+    ),
+    element: $("#cloud-2"),
+  };
+
+  cloud2.element.css({
+    left: cloud2.x + "px",
+    top: cloud2.y + "px",
+  });
+
+  cloud3 = {
+    x: Math.floor(Math.random() * (window.innerWidth - $("#cloud-3").width())),
+    y: Math.floor(
+      Math.random() * (window.innerHeight - $("#cloud-3").height())
+    ),
+    element: $("#cloud-3"),
+  };
+
+  cloud3.element.css({
+    left: cloud3.x + "px",
+    top: cloud3.y + "px",
   });
 }
