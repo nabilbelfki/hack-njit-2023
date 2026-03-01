@@ -8,6 +8,16 @@ var canShoot = true;
 var direction = "up";
 var enemy = 100;
 var hasGameStarted = false;
+var timerId;
+var secondsSurvived = 0;
+function formatTime(totalSeconds) {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const pad = (num) => String(num).padStart(2, '0');
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+}
+
 $(document).ready(function () {
   var keys = {};
   keys.LEFT = 37;
@@ -30,10 +40,58 @@ $(document).ready(function () {
     }
   }, 1);
 
+
+
   $("#start-game").click(function () {
     $("#container").hide();
     hasGameStarted = true;
+    timerId = setInterval(function () {
+      if (health > 0) {
+        secondsSurvived++;
+        $("#timeboard").text(formatTime(secondsSurvived));
+      }
+    }, 1000);
   });
+
+  // Highscores logic
+  $("#restart-game").click(function () {
+    location.reload();
+  });
+
+  $("#submit-score").click(function () {
+    var name = $("#player-name").val();
+    if (name.trim() === "") {
+      alert("Please enter a name.");
+      return;
+    }
+    $.post("submit_score.php", { name: name, score: score, time: secondsSurvived }, function (data) {
+      if (data.success) {
+        $("#game-over-section").hide();
+        $("#restart-game").show();
+        $("#highscores-title").show();
+        $("#highscores-container").show();
+        loadHighscores();
+      }
+    }).fail(function () {
+      alert("Error submitting score.");
+    });
+  });
+
+  function loadHighscores() {
+    $.get("get_scores.php", function (data) {
+      var list = $("#highscores-list");
+      list.empty();
+      if (data && data.length > 0) {
+        data.forEach(function (item, index) {
+          list.append("<tr style='border-bottom: 1px solid #ddd;'><td style='padding: 10px;'>" + (index + 1) + "</td><td style='padding: 10px;'>" + item.name + "</td><td style='padding: 10px;'>" + item.score + "</td><td style='padding: 10px;'>" + formatTime(item.time) + "</td></tr>");
+        });
+      } else {
+        list.append("<tr><td colspan='4' style='text-align:center; padding: 10px;'>No highscores yet.</td></tr>");
+      }
+    }).fail(function () {
+      $("#highscores-list").html("<tr><td colspan='4' style='text-align:center; padding: 10px;'>Error loading highscores.</td></tr>");
+    });
+  }
 
   ship = {
     x: window.innerWidth / 2,
@@ -271,14 +329,23 @@ function collect(points) {
 
 //   }
 
-function spinRandom(position) {}
+function spinRandom(position) { }
 
 function loseLife() {
   if (!forceField) {
     if (health == 3) $("#heart-3").hide();
     if (health == 2) $("#heart-2").hide();
     if (health == 1) {
-      $("#gameover").show();
+      clearInterval(timerId);
+      $("#final-score").text(score);
+      $("#final-time").text(formatTime(secondsSurvived));
+
+      $("#game-over-section").show();
+      $("#restart-game").hide();
+      $("#highscores-title").hide();
+      $("#highscores-container").hide();
+
+      $("#highscores-modal").css("display", "flex");
       $("#heart-1").hide();
     }
     health--;
