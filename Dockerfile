@@ -1,27 +1,24 @@
 FROM php:8.4-fpm-alpine
 
-# Install Nginx and required dependencies for MySQL PDO
-RUN apk update && apk add --no-cache nginx \
-    && docker-php-ext-install pdo pdo_mysql
+# Install nginx, supervisor, and PHP extensions in one layer
+RUN apk add --no-cache \
+    nginx \
+    supervisor \
+    && docker-php-ext-install pdo pdo_mysql \
+    && mkdir -p /var/log/supervisor /var/log/nginx /run/nginx
 
-# Configure Nginx
+# Nginx config
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Setup application directory
+# Supervisord config
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 WORKDIR /var/www/html
-COPY . /var/www/html/
 
-# Secure permissions
-RUN chown -R nobody:nobody /var/www/html \
-    && chown -R nobody:nobody /var/lib/nginx \
-    && chown -R nobody:nobody /var/log/nginx
+COPY --chown=nobody:nobody . /var/www/html
 
-# Setup the initialization script and make it executable
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
+RUN find /var/www/html -type d -exec chmod 755 {} \; \
+    && find /var/www/html -type f -exec chmod 644 {} \;
 
-# Expose port 80 for Nginx
 EXPOSE 80
-
-# Run both FPM and Nginx
-CMD ["/start.sh"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
