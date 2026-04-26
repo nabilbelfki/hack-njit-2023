@@ -7,6 +7,17 @@ var gear, coin, ship, orb;
 var canShoot = true;
 var direction = "up";
 var enemy = 100;
+var hasGameStarted = false;
+var timerId;
+var secondsSurvived = 0;
+function formatTime(totalSeconds) {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const pad = (num) => String(num).padStart(2, '0');
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+}
+
 $(document).ready(function () {
   var keys = {};
   keys.LEFT = 37;
@@ -21,6 +32,66 @@ $(document).ready(function () {
   spawnRocks();
   clouds();
   moveSpinner();
+
+  var intervalID = setInterval(function () {
+    var result = moveSpinner();
+    if (result === true) {
+      clearInterval(intervalID);
+    }
+  }, 1);
+
+
+
+  $("#start-game").click(function () {
+    $("#container").hide();
+    hasGameStarted = true;
+    timerId = setInterval(function () {
+      if (health > 0) {
+        secondsSurvived++;
+        $("#timeboard").text(formatTime(secondsSurvived));
+      }
+    }, 1000);
+  });
+
+  // Highscores logic
+  $("#restart-game").click(function () {
+    location.reload();
+  });
+
+  $("#submit-score").click(function () {
+    var name = $("#player-name").val();
+    if (name.trim() === "") {
+      alert("Please enter a name.");
+      return;
+    }
+    $.post("submit_score.php", { name: name, score: score, time: secondsSurvived }, function (data) {
+      if (data.success) {
+        $("#game-over-section").hide();
+        $("#restart-game").show();
+        $("#highscores-title").show();
+        $("#highscores-container").show();
+        loadHighscores();
+      }
+    }).fail(function () {
+      alert("Error submitting score.");
+    });
+  });
+
+  function loadHighscores() {
+    $.get("get_scores.php", function (data) {
+      var list = $("#highscores-list");
+      list.empty();
+      if (data && data.length > 0) {
+        data.forEach(function (item, index) {
+          list.append("<tr style='border-bottom: 1px solid #ddd;'><td style='padding: 10px;'>" + (index + 1) + "</td><td style='padding: 10px;'>" + item.name + "</td><td style='padding: 10px;'>" + item.score + "</td><td style='padding: 10px;'>" + formatTime(item.time) + "</td></tr>");
+        });
+      } else {
+        list.append("<tr><td colspan='4' style='text-align:center; padding: 10px;'>No highscores yet.</td></tr>");
+      }
+    }).fail(function () {
+      $("#highscores-list").html("<tr><td colspan='4' style='text-align:center; padding: 10px;'>Error loading highscores.</td></tr>");
+    });
+  }
 
   ship = {
     x: window.innerWidth / 2,
@@ -183,21 +254,12 @@ $(document).ready(function () {
         coin.element.show();
       }
 
-      if (checkCollision(ship, gear) && gear.element.is(":visible")) {
-        loseLife();
+      if (checkCollision(ship, gear)) {
         gear.element.hide();
-        gear.x = Math.floor(
-          Math.random() * (window.innerWidth - gear.element.width())
-        );
-        gear.y = Math.floor(
-          Math.random() * (window.innerHeight - gear.element.height())
-        );
-        gear.element.css({
-          left: gear.x + "px",
-          top: gear.y + "px",
-        });
-        setHealthBarPosition();
-        gear.element.show();
+        if (!forceField) {
+          loseLife();
+        }
+        kill();
       }
 
       if (checkCollision(ship, orb) && orb.element.is(":visible")) {
@@ -267,14 +329,23 @@ function collect(points) {
 
 //   }
 
-function spinRandom(position) {}
+function spinRandom(position) { }
 
 function loseLife() {
   if (!forceField) {
     if (health == 3) $("#heart-3").hide();
     if (health == 2) $("#heart-2").hide();
     if (health == 1) {
-      $("#gameover").show();
+      clearInterval(timerId);
+      $("#final-score").text(score);
+      $("#final-time").text(formatTime(secondsSurvived));
+
+      $("#game-over-section").show();
+      $("#restart-game").hide();
+      $("#highscores-title").hide();
+      $("#highscores-container").hide();
+
+      $("#highscores-modal").css("display", "flex");
       $("#heart-1").hide();
     }
     health--;
@@ -576,27 +647,75 @@ function clouds() {
 }
 
 function moveSpinner() {
-  var spinner = $("#gear");
-  var ship = $("#ship");
+  if (hasGameStarted) {
+    var spinner = $("#gear");
+    var ship = $("#ship");
 
-  // Calculate the distance between the spinner and the ship
-  var dx = ship.offset().left - spinner.offset().left;
-  var dy = ship.offset().top - spinner.offset().top;
-  var distance = Math.sqrt(dx * dx + dy * dy);
+    // Calculate the distance between the spinner and the ship
+    var dx = ship.offset().left - spinner.offset().left;
+    var dy = ship.offset().top - spinner.offset().top;
+    var distance = Math.sqrt(dx * dx + dy * dy);
 
-  // Calculate the duration of the animation based on the distance
-  var duration = distance / 100;
+    // Calculate the duration of the animation based on the distance
+    var duration = distance / 100;
 
-  // Update the animation duration
-  spinner.animate(
-    {
-      left: ship.offset().left,
-      top: ship.offset().top,
-    },
-    duration * 1000,
-    function () {
-      // Readjust the position of the spinner
-      moveSpinner();
-    }
-  );
+    // Update the animation duration
+    spinner.animate(
+      {
+        left: ship.offset().left,
+        top: ship.offset().top,
+      },
+      duration * 1000,
+      function () {
+        // Readjust the position of the spinner
+        moveSpinner();
+      }
+    );
+    return true;
+  }
+}
+
+function kill() {
+  console.log("got here");
+  let x = gear.x;
+  let y = gear.y;
+  // $("#gear").hide();
+  $("#health-5").hide();
+  $("#health-4").hide();
+  $("#health-3").hide();
+  $("#health-2").hide();
+  $("#health-1").hide();
+
+  explosion = {
+    x: x,
+    y: y,
+    element: $("#explosion"),
+  };
+
+  explosion.element.css({
+    left: x + 25 + "px",
+    top: y + 20 + "px",
+  });
+
+  $("#explosion").show();
+
+  console.log("explosion");
+
+  setTimeout(function () {
+    $("#explosion").hide();
+  }, 1000);
+
+  setTimeout(function () {
+    gear.x = Math.floor(
+      Math.random() * (window.innerWidth - $("#gear").width())
+    );
+    gear.y = Math.floor(
+      Math.random() * (window.innerHeight - $("#gear").height())
+    );
+    enemy = 100;
+
+    $("#health-5").show();
+
+    $("#gear").show();
+  }, 5000);
 }

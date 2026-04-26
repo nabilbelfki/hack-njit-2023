@@ -8,10 +8,12 @@
 }
 
 body {
-    background-image : url('Images/Ocean.png')
+    background-image: url('Images/Ocean.png');
+    font-family: 'Courier New', monospace;
 }
 
 #gameover {
+    font-family: 'Courier New', monospace;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -44,18 +46,35 @@ body {
     align-items: center;
     width: 100px;
     height: 100px;
-    border: 2px solid black;
+    /* border: 2px solid black; */
     border-radius: 50%;
-    font-size: 48px;
+    font-size: 64px;
     font-weight: bold;
     text-align: center;
-    background-color: white;
+    color: yellow;
+    font-family: 'Courier New', monospace;
+    /* background-color: white; */
 }
 
 #scoreboard {
     position: absolute;
-    top: 5;
-    right: 5;
+    top: 5px;
+    right: 5px;
+}
+
+#timeboard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    font-size: 64px;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    font-family: 'Courier New', monospace;
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
 }
 
 
@@ -79,9 +98,9 @@ body {
 }
 
 #gear {
-    -webkit-animation:spin 4s linear infinite;
-    -moz-animation:spin 4s linear infinite;
-    animation:spin 4s linear infinite;
+    -webkit-animation: spin 4s linear infinite;
+    -moz-animation: spin 4s linear infinite;
+    animation: spin 4s linear infinite;
     width: 100px;
     height: 100px;
     position: absolute;
@@ -138,9 +157,24 @@ body {
     position: absolute;
 }
 
-@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
-@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
-@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+@-moz-keyframes spin {
+    100% {
+        -moz-transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
 
 
 .clouds {
@@ -166,7 +200,71 @@ body {
 } */
 
 @keyframes move-clouds {
-    from { left: -200px; }
-    to { left: 100%; }
+    from {
+        left: -200px;
+    }
+
+    to {
+        left: 100%;
+    }
 }
 
+/* 
+.overlay {
+    z-index: 9999999999999;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+} */
+
+#start-game {
+    background-color: #4CAF50;
+    /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#hack-njit {
+    width: 350px;
+    height: 350px;
+}
+
+#super-sail {
+    width: 1000px;
+    /* height: 350px; */
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+}
